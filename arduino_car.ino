@@ -53,7 +53,7 @@ void setup() {
   servo.attach(SERVO_PIN);
   servo.write(pos);
 
-//  irrecv.enableIRIn(); //Si descomentamos no funcionan los motrores.
+//  irrecv.enableIRIn(); //Si descomentamos no funcionan los motores.
 
   pinMode(ENA_PIN, OUTPUT);
   pinMode(IN1_PIN, OUTPUT);
@@ -83,9 +83,9 @@ void esquivarObstaculos() {
     parar();
     medirDistancias();
     if (distanciaDerecha > distanciaIzquierda) {
-      girarDerecha();
+      rotarDerecha();
     } else {
-      girarIzquierda();
+      rotarIzquierda();
     }
     delay(200);
   }
