@@ -1,6 +1,7 @@
 #include "Servo.h"
 #include "SR04.h"
 #include "IRremote.h"
+#include "RobotCarLib.h"
 
 #define TRIG_PIN A0
 #define ECHO_PIN A1
@@ -28,13 +29,6 @@
 //*               FF42BD
 //#               FF52AD
 
-#define ENA_PIN 11
-#define IN1_PIN 8
-#define IN2_PIN 7
-#define ENB_PIN 3
-#define IN3_PIN 1
-#define IN4_PIN 2
-
 SR04 ds = SR04(ECHO_PIN, TRIG_PIN);
 long distanciaCentro;
 long distanciaDerecha;
@@ -48,6 +42,8 @@ IRrecv irrecv(IR_PIN);
 
 int velocidad = 100;
 
+RobotCarLib motor;
+
 void setup() {
 //  Serial.begin(9600); //Si descomentamos, motor izdo atras no funciona.
   servo.attach(SERVO_PIN); //Deshabilita PWM 9 y 10.
@@ -55,16 +51,8 @@ void setup() {
 
 //  irrecv.enableIRIn(); //Si descomentamos no funcionan los motores. PWM 3 y 11 no funcionan.
 
-  pinMode(ENA_PIN, OUTPUT);
-  pinMode(IN1_PIN, OUTPUT);
-  pinMode(IN2_PIN, OUTPUT);
-  pinMode(ENB_PIN, OUTPUT);
-  pinMode(IN3_PIN, OUTPUT);
-  pinMode(IN4_PIN, OUTPUT);
-
-//  testMotorDerecho();
-//  testMotorIzquierdo();
-
+  motor.Init();
+//  testMotor();
 }
 
 void loop() {
@@ -75,17 +63,17 @@ void loop() {
 
 void esquivarObstaculos() {
   if (distanciaCentro > 50) {
-    adelante();
+    motor.MoveForward();
   } else if (distanciaCentro < 10) {
-    atras();
+    motor.MoveBackward();
     delay(100);
   } else {
-    parar();
+    motor.Stop();
     medirDistancias();
     if (distanciaDerecha > distanciaIzquierda) {
-      rotarDerecha();
+      motor.TurnRight();
     } else {
-      rotarIzquierda();
+      motor.TurnLeft();
     }
     delay(200);
   }
@@ -140,86 +128,16 @@ void tecla() {
   }
 }
 
-// Motores
-void parar() {
-  motorDerechoParar();
-  motorIzquierdoParar();
-}
-
-void adelante() {
-  motorDerechoAdelante(velocidad);
-  motorIzquierdoAdelante(velocidad);
-}
-
-void atras() {
-  motorDerechoAtras(velocidad);
-  motorIzquierdoAtras(velocidad);
-}
-
-void girarDerecha() {
-  motorDerechoAdelante(velocidad);
-  motorIzquierdoParar();
-}
-
-void girarIzquierda() {
-  motorIzquierdoAdelante(velocidad);
-  motorDerechoParar();
-}
-
-void rotarDerecha() {
-  motorDerechoAdelante(velocidad);
-  motorIzquierdoAtras(velocidad);
-}
-
-void rotarIzquierda() {
-  motorIzquierdoAdelante(velocidad);
-  motorDerechoAtras(velocidad);
-}
-
-void testMotorDerecho() {
-  motorDerechoAdelante(velocidad);
+// Motor
+void testMotor() {
+  motor.MoveForward();
   delay(1000);
-  motorDerechoAtras(velocidad);
+  motor.MoveBackward();
   delay(1000);
-  motorDerechoParar();
-}
-
-void testMotorIzquierdo() {
-  motorIzquierdoAdelante(velocidad);
+  motor.TurnLeft();
   delay(1000);
-  motorIzquierdoAtras(velocidad);
+  motor.TurnRight();
   delay(1000);
-  motorIzquierdoParar();
-}
-
-void motorDerechoAdelante(int s) {
-  digitalWrite(IN3_PIN, HIGH);
-  digitalWrite(IN4_PIN, LOW);
-  analogWrite(ENB_PIN, s);
-}
-
-void motorDerechoAtras(int s) {
-  digitalWrite(IN3_PIN, LOW);
-  digitalWrite(IN4_PIN, HIGH);
-  analogWrite(ENB_PIN, s);
-}
-
-void motorDerechoParar() {
-  analogWrite(ENB_PIN, 0);
-}
-
-void motorIzquierdoAdelante(int s) {
-  digitalWrite(IN1_PIN, HIGH);
-  digitalWrite(IN2_PIN, LOW);
-  analogWrite(ENA_PIN, s);
-}
-
-void motorIzquierdoAtras(int s) {
-  digitalWrite(IN1_PIN, LOW);
-  digitalWrite(IN2_PIN, HIGH);
-  analogWrite(ENA_PIN, s);
-}
-
-void motorIzquierdoParar() {
-  analogWrite(ENA_PIN, 0);
+  motor.Stop();
+  delay(1000);
 }
