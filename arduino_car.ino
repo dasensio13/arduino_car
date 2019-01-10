@@ -50,10 +50,10 @@ int velocidad = 100;
 
 void setup() {
 //  Serial.begin(9600); //Si descomentamos, motor izdo atras no funciona.
-  servo.attach(SERVO_PIN);
+  servo.attach(SERVO_PIN); //Deshabilita PWM 9 y 10.
   servo.write(pos);
 
-//  irrecv.enableIRIn(); //Si descomentamos no funcionan los motores.
+//  irrecv.enableIRIn(); //Si descomentamos no funcionan los motores. PWM 3 y 11 no funcionan.
 
   pinMode(ENA_PIN, OUTPUT);
   pinMode(IN1_PIN, OUTPUT);
