@@ -22,7 +22,7 @@
 //*               0x00  0x42  0x00FF42BD
 //#               0x00  0x52  0x00FF52AD
 
-const int IR_PIN = 12;
+const int IR_PIN = 6;
 IRrecv irrecv(IR_PIN);
 
 void MandoInit() {
